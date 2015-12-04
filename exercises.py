@@ -4,9 +4,9 @@ def reverse_list(l):
     """
     Reverses order of elements in list l.
     """
-#    l_rev = []
-#    for i in range(len(l)-1,-1,-1):
-#        l_rev.append(l[i])
+    l_rev = []
+    for i in range(len(l)-1,-1,-1):
+        l_rev.append(l[i])
     return l[-1::-1]
 
 
@@ -68,7 +68,7 @@ def count_num_vowels(s):
     for c in s:
         if is_english_vowel(c):
             n += 1
-    return n 
+    return n
 
 
 def test_count_num_vowels():
@@ -90,13 +90,22 @@ def histogram(l):
     """
     Converts a list of integers into a simple string histogram.
     """
+# "R"*5 will return RRRRR
+# "#"*3 will return ###
+#a solution (without new lines)
+# s = ""
+#for i in l:
+#  s += "#"*i + "|n"
+#return s
+
+#Do this with with a list which you then convert into a string in the end
     s = []
     for x in l:
         s.append("#" * x)
 #       s +="#" * x + '\n'
 #    return s[:-1]
     return "\n".join(s)
-     
+
 
 def test_histogram():
     assert histogram([2, 5, 1]) == '##\n#####\n#'
@@ -109,7 +118,11 @@ def get_word_lengths(s):
     Returns a list of integers representing
     the word lengths in string s.
     """
-    return None
+    lengths = []
+    words =  s.split()
+    for w in words:
+        lengths.append(len(w))
+    return lengths
 
 
 def test_get_word_lengths():
@@ -124,7 +137,8 @@ def find_longest_word(s):
     Returns the longest word in string s.
     In case there are several, return the first.
     """
-    return None
+    words =  s.split()
+    return max(words, key=len)
 
 
 def test_find_longest_word():
@@ -141,7 +155,14 @@ def validate_dna(s):
     Return True if the DNA string only contains characters
     a, c, t, or g (lower or uppercase). False otherwise.
     """
-    return None
+    #"What does LOWERcase do?" .lower
+    #for character in "this is a sentence"
+    for character in s:
+        if character.lower() not in 'atgc':
+            return False
+        else:
+            return s
+
 
 
 def test_validate_dna():
@@ -157,7 +178,14 @@ def base_pair(c):
     of the base pair. If the base is not recognized,
     return 'unknown'.
     """
-    return None
+    d = {'a': 't', 't': 'a', 'c': 'g', 'g': 'c'}
+    if c.lower() in d:
+       return d[c.lower()]
+    else:
+       return 'unknown'
+    #import collections
+    #d = collections.defaultdict
+
 
 
 def test_base_pair():
@@ -180,7 +208,11 @@ def transcribe_dna_to_rna(s):
     Return string s with each letter T replaced by U.
     Result is always uppercase.
     """
-    return None
+    #"this is a nice".replace("THIS", "that")
+    #for character in s:
+    a = s.replace("T", "U")
+    d = a.replace("t", "U")
+    return d.upper()
 
 
 def test_transcribe_dna_to_rna():
@@ -195,7 +227,10 @@ def get_complement(s):
     Return the DNA complement in uppercase
     (A -> T, T-> A, C -> G, G-> C).
     """
-    return None
+    s_complement = ''
+    for c in s:
+        s_complement += base_pair(c)
+    return s_complement.upper()
 
 
 def test_get_complement():
@@ -210,7 +245,7 @@ def get_reverse_complement(s):
     Return the reverse complement of string s
     (complement reversed in order).
     """
-    return None
+    return reverse_string(get_complement(s))
 
 
 def test_get_reverse_complement():
@@ -224,7 +259,11 @@ def remove_substring(substring, string):
     """
     Returns string with all occurrences of substring removed.
     """
-    return None
+    return string.replace(substring, '')
+    #for substring in string:
+    #    substring.replace('')
+    #    return string
+    #Replace substring by nothing ('')
 
 
 def test_remove_substring():
@@ -242,8 +281,14 @@ def get_position_indices(triplet, dna):
     in a DNA sequence. We start counting from 0
     and jump by 3 characters from one position to the next.
     """
-    return None
 
+    #in python 3 one slash is float division and two slashes is integer division (check which is which)
+    l = []
+    triplets = [dna[i:i+3] for i in range(0, len(dna), 3)]
+    for i, j in enumerate(triplets):
+        if j == triplet:
+            l.append(i)
+    return l
 
 def test_get_position_indices():
     assert get_position_indices('GAA', 'CCGGAAGAGCTTACTTAG') == [1]
@@ -261,7 +306,19 @@ def get_3mer_usage_chart(s):
     The list is alphabetically sorted by the name
     of the 3-mer.
     """
-    return None
+    #use dictionary to count them, key will be how many times it appears, 3mer will be values
+    #start with an empty dictionary
+    d = {}
+    for i in range(len(s) -2):
+        kmer = s[i:i+3]
+        if kmer in d:
+            d[kmer] += 1
+        else:
+            d[kmer] = 1
+        #d[s[i:i+3]]
+    l = list(d.items())
+    l.sort()
+    return l
 
 
 def test_get_3mer_usage_chart():
@@ -292,7 +349,13 @@ def read_column(file_name, column_number):
     Reads column column_number from file file_name
     and returns the values as floats in a list.
     """
-    return None
+    #it assumes that in column numbers there are floating points
+    l = []
+    with open(file_name, 'r') as f:
+        for line in f:
+            words = line.split()[column_number-1]
+            l.append(float(words))
+        return l
 
 
 def test_read_column():
@@ -300,8 +363,7 @@ def test_read_column():
     import tempfile
     import os
 
-    text = """
-1   0.1  0.001
+    text = """1   0.1  0.001
 2   0.2  0.002
 3   0.3  0.003
 4   0.4  0.004
@@ -312,6 +374,10 @@ def test_read_column():
     file_name = tempfile.mkstemp()[1]
     with open(file_name, 'w') as f:
         f.write(text)
+#This is a traditional way to open, write and close a file (but the above is better):
+    # f= open (...)
+    # f.write()
+    # f.close()
 
     # and now we pass the file name to the function which will read the column
     assert read_column(file_name, 2) == [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
@@ -322,6 +388,8 @@ def test_read_column():
 
 # ------------------------------------------------------------------------------
 
+def give_me_second_element(t):
+    return t[l]
 def character_statistics(file_name):
     """
     Reads text from file file_name, then
@@ -331,7 +399,20 @@ def character_statistics(file_name):
     Use the isalpha() method to figure out
     whether the character is in the alphabet.
     """
-    return None
+
+    d = {}
+    with open(file_name, 'r') as f:
+        for c in f.read().lower():
+            if c.isalpha():
+                if c in d:
+                    d[c] += 1
+                else:
+                    d[c] =1
+    l = list(d.items())
+    l = sorted(l, key=lambda x: x[1], reverse=True)
+    most = l[0][0]
+    least = l[-1][0]
+    return (most, least)
 
 
 def test_character_statistics():
@@ -340,7 +421,7 @@ def test_character_statistics():
     import os
 
     text = """
-To be, or not to be: that is the question:
+To be, or not to be: z that is the question:
 Whether 'tis nobler in the mind to suffer
 The slings and arrows of outrageous fortune,
 Or to take arms against a sea of troubles,
@@ -409,4 +490,4 @@ def pythagorean_triples(n):
 # ------------------------------------------------------------------------------
 
 def test_pythagorean_triples():
-    pass  # so far we do not test anything, check also test coverage
+    #assert 
